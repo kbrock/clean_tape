@@ -29,17 +29,13 @@ module CleanTape
         node.keys.each do |key|
           value = node[key]
           case value
-          when NilClass
-            # do nothing
           when Hash
             traverse_body(value, "indent" + "  ")
-          when String, Fixnum
+          when String, Fixnum, TrueClass, FalseClass, NilClass
             node[key] = mapper.fix_field(key, value)
           when Array
             case value.first
-            when NilClass
-              #do nothing
-            when String, Fixnum
+            when String, Fixnum, TrueClass, FalseClass, NilClass
               node[key] = mapper.fix_fields(key, value)
             when Hash
               traverse_body(value, "indent" + "  ")
