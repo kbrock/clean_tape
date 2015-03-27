@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = CleanTape::VERSION
   spec.authors       = ["Keenan Brock"]
   spec.email         = ["keenan@thebrocks.net"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Clean tapes generated with vcr testing tool.}
+  spec.description   = %q{Clean tapes generated with vcr testing tool.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
