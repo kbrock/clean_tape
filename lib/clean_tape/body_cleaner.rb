@@ -10,8 +10,9 @@ module CleanTape
 
     def clean(value)
       if value
-        body = parser.parse(value)
-        traverse_body(body)
+        body = parser.load(value)
+        # assignment shouldn't be necessary (is changing inplace)
+        body = traverse_body(body)
         parser.dump(body)
       end
     end
