@@ -81,17 +81,12 @@ module CleanTape
         %w(Cache-Control).each { |k| h.delete(k) }
         %w(Server X-Ua-Compatible X-Request-Id X-Runtime X-Rack-Cache X-Powered-By).each { |k| h.delete(k) }
 
-        if h["Date"].kind_of?(Array)
-          h["Date"] = [DATE]
-        elsif h["Date"].kind_of?(String)
-          h["Date"] = DATE
-        end
-
+        hardcode(h, "Date", DATE)
         # Etags change based upon contents
         # but the client may depend upon them
         # not sure best route here
         # e.g.: '"c15ce0b593ab74018a5162399548a38d"'
-        h["Etag"] = ETAG if h["Etag"]
+        hardcode(h, "Etag", ETAG)
 
         # e.g.: Set-Cookie ["_session_id=cd19c03593ace0ca6c3b3d4b350538e6; path=/; HttpOnly"]
         h["Set-Cookie"].map! do |c|
@@ -142,6 +137,14 @@ module CleanTape
 
     def interactions
       f["http_interactions"]
+    end
+
+    def hardcode(h, key, value)
+      if h[key].kind_of?(Array)
+        h[key] = [value]
+      elsif h[key].kind_of?(String)
+        h[key] = value
+      end
     end
   end
 end
