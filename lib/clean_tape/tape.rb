@@ -3,6 +3,8 @@ module CleanTape
     VCR = "VCR 2.9.3"
     DATE = "Sat, 01 Jan 2000 00:00:00 GMT"
     COOKIE_SESSION = "xxx"
+    ETAG = "c15ce0b593ab74018a5162399548a38d"
+
     attr_accessor :filename
     attr_accessor :verbose
     attr_accessor :body_cleaner
@@ -84,12 +86,12 @@ module CleanTape
         elsif h["Date"].kind_of?(String)
           h["Date"] = DATE
         end
-        # e.g.: '"c15ce0b593ab74018a5162399548a38d"'
 
         # Etags change based upon contents
         # but the client may depend upon them
         # not sure best route here
-        #h["Etag"] = ETAG if h["Etag"]
+        # e.g.: '"c15ce0b593ab74018a5162399548a38d"'
+        h["Etag"] = ETAG if h["Etag"]
 
         # e.g.: Set-Cookie ["_session_id=cd19c03593ace0ca6c3b3d4b350538e6; path=/; HttpOnly"]
         h["Set-Cookie"].map! do |c|
