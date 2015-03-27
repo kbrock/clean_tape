@@ -16,7 +16,9 @@ module CleanTape
     end
 
     def fix_fields(name, values)
-      if values.kind_of?(Array)
+      if values.nil?
+        values
+      elsif values.kind_of?(Array)
         values.map { |value| fix_field(name, value) }
       else
         fix_field(name, values)
@@ -24,6 +26,7 @@ module CleanTape
     end
 
     def fix_field(name, value)
+      return value if value.nil? || (value.kind_of?(String) && value.empty?)
       if mac?(name)
         fix_mac(value)
       elsif ip?(name)

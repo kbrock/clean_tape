@@ -3,6 +3,19 @@ require 'spec_helper'
 describe CleanTape::Mapper do
   subject { described_class.new }
 
+  describe "#fix_field" do
+    it { expect(subject.fix_field("ip", nil)).to eq(nil) }
+    it { expect(subject.fix_field("ip", "")).to eq("") }
+    it { expect(subject.fix_field("x", "abc")).to eq("abc") }
+  end
+
+  describe "#fix_fields" do
+    it { expect(subject.fix_fields("ip", nil)).to eq(nil) }
+    it { expect(subject.fix_fields("ip", [])).to eq([]) }
+    it { expect(subject.fix_fields("ip", %w(3.4.1.1 3.4.1.2))).to eq(%w(192.168.1.1 192.168.1.2)) }
+    it { expect(subject.fix_fields("x", %w(3.4.1.1 3.4.1.2))).to eq(%w(3.4.1.1 3.4.1.2)) }
+  end
+
   describe "#mac?" do
     it { expect(subject.mac?("mac")).to eq(true) }
     it { expect(subject.mac?("ip")).to eq(false) }
