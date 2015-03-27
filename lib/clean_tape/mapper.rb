@@ -1,5 +1,12 @@
 module CleanTape
   class Mapper
+    DOMAIN = "example.com"
+
+    MAC_REGEX = /^(?:[0-9a-fA-F]{2}[:-]){4}([0-9a-fA-F]{2})([:-])([0-9a-fA-F]{2})$/i
+    IP_REGEX = /^\d+\.\d+\.(\d+\.\d+)$/ # very lacking and not ipv6 compatible
+    HOST_REGEX = /[.]com$/
+    URL_REGEX = %r{^https?://}
+
     attr_accessor :mac_fields
     attr_accessor :ip_fields
     attr_accessor :domain_fields
@@ -26,55 +33,65 @@ module CleanTape
     end
 
     def fix_field(name, value)
-      return value if value.nil? || (value.kind_of?(String) && value.empty?)
+      return value if value.nil? || !!(value.kind_of?(String) && value.empty?)
       if mac?(name)
         fix_mac(value)
       elsif ip?(name)
         fix_ip(value)
+      elsif host?(name)
+        fix_host(value)
       elsif domain?(name)
         fix_domain(value)
       elsif url?(name)
+        fix_url(value)
+      elsif mac?(name, value) # now guess
+        fix_mac(value)
+      elsif ip?(name, value)
+        fix_ip(value)
+      elsif host?(name, value) # no way to determine domain v host, just do host
+        fix_host(value)
+      elsif url?(name, value)
         fix_url(value)
       else
         value
       end
     end
 
-    def mac?(name)
-      mac_fields.include?(name)
+    def mac?(name, value = nil)
+      mac_fields.include?(name) || !!(value && value.to_s.match(MAC_REGEX))
     end
 
     def fix_mac(value)
-      m = value.match(/^(?:[0-9a-fA-F]{2}[:-]){4}([0-9a-fA-F]{2})([:-])([0-9a-fA-F]{2})$/i)
+      m = value.match(MAC_REGEX)
       (["00"] * 4 + [m[1], m[3]]).join(m[2])
     end
 
-    def ip?(name)
-      ip_fields.include?(name)
+    def ip?(name, value = nil)
+      ip_fields.include?(name) || !!(value && value.to_s.match(IP_REGEX))
     end
 
     def fix_ip(value)
-      value.gsub(/\d+\.\d+\.(\d+\.\d+)/, "192.168.\\1")
+      value.gsub(IP_REGEX, "192.168.\\1")
     end
 
-    def domain?(name)
+    def domain?(name, value = nil)
       domain_fields.include?(name)
     end
 
     def fix_domain(value)
-      value
+      DOMAIN  if value && !value.empty?
     end
 
-    def host?(name)
-      host_fields.include?(name)
+    def host?(name, value = nil)
+      host_fields.include?(name) || !!(value && value.to_s.match(HOST_REGEX))
     end
 
     def fix_host(value)
-      value
+      "#{value.split(".").first}.#{DOMAIN}" if value && !value.empty?
     end
 
-    def url?(name)
-      url_fields.include?(name)
+    def url?(name, value = nil)
+      url_fields.include?(name) || !!(value && value.to_s.match(URL_REGEX))
     end
 
     def fix_url(value)

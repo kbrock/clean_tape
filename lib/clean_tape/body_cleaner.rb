@@ -3,8 +3,8 @@ module CleanTape
     attr_accessor :mapper
     attr_accessor :parser
 
-    def initialize(parser)
-      self.mapper = Mapper.new
+    def initialize(parser, mapper)
+      self.mapper = mapper
       self.parser = parser
     end
 

@@ -2,7 +2,8 @@ require 'spec_helper'
 require 'json'
 
 describe CleanTape::BodyCleaner do
-  subject { described_class.new(YAML) }
+  let(:mapper) { CleanTape::Mapper.new }
+  subject { described_class.new(YAML, mapper) }
 
   describe "str (helper function)" do
     it { expect(str('key' => 'value')).to eq(%Q{---\nkey: value\n}) }

@@ -22,8 +22,12 @@ module CleanTape
       json || yaml
     end
 
+    def mapper
+      @mapper ||= Mapper.new
+    end
+
     def cleaner
-      BodyCleaner.new(parser)
+      @cleaner ||= BodyCleaner.new(parser, mapper)
     end
 
     def parser
