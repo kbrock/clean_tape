@@ -4,14 +4,15 @@ module CleanTape
     attr_accessor :ip_fields
     attr_accessor :domain_fields
     attr_accessor :host_fields
-    attr_accessor :urls_fields
+    attr_accessor :url_fields
 
     def initialize
-      self.mac_fields = []
-      self.ip_fields = []
-      self.domain_fields = []
+      # some time in the future this will be defined by others
+      self.mac_fields = %w(mac)
+      self.ip_fields = %w(ip ip_address)
+      self.domain_fields = %w(domain_name)
       self.host_fields = []
-      self.urls_fields = []
+      self.url_fields = %w(url)
     end
 
     def fix_fields(name, values)
@@ -23,17 +24,21 @@ module CleanTape
     end
 
     def fix_field(name, value)
-      if mac_fields.include?(name)
+      if mac?(name)
         fix_mac(value)
-      elsif ip_fields.include?(name)
+      elsif ip?(name)
         fix_ip(value)
-      elsif domain_fields.include?(name)
+      elsif domain?(name)
         fix_domain(value)
-      elsif urls_fields.include?(name)
-        fix_urls(value)
+      elsif url?(name)
+        fix_url(value)
       else
         value
       end
+    end
+
+    def mac?(name)
+      mac_fields.include?(name)
     end
 
     def fix_mac(value)
@@ -41,19 +46,35 @@ module CleanTape
       (["00"] * 4 + [m[1], m[3]]).join(m[2])
     end
 
+    def ip?(name)
+      ip_fields.include?(name)
+    end
+
     def fix_ip(value)
       value.gsub(/\d+\.\d+\.(\d+\.\d+)/, "192.168.\\1")
+    end
+
+    def domain?(name)
+      domain_fields.include?(name)
     end
 
     def fix_domain(value)
       value
     end
 
+    def host?(name)
+      host_fields.include?(name)
+    end
+
     def fix_host(value)
       value
     end
 
-    def fix_urls(value)
+    def url?(name)
+      url_fields.include?(name)
+    end
+
+    def fix_url(value)
       value
     end
   end
