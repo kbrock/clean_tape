@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-arg_list = ARGV.map { |x| "\"#{x}\"" }.join(" ")
-arg_list = Dir["samples/*"] if arg_list.empty?
+arg_list = ARGV.map { |x| x.include?(" ") ? "\"#{x}\"" : x }
+arg_list += Dir["samples/*.yml"] unless arg_list.detect { |arg| arg.to_s =~ /^[^-]/ }
 
 puts ":: #{arg_list}"
-exec %{ruby -I lib ./bin/clean_tape --verbose #{arg_list}}
+exec %{ruby -I lib ./bin/clean_tape --verbose #{arg_list.join(" ")}}
 
