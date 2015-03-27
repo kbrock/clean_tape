@@ -1,3 +1,6 @@
 #!/usr/bin/env ruby
 
 require 'clean_tape'
+require 'clean_tape/cli'
+
+CleanTape::Cli.new.parse(ARGV, ENV).run
