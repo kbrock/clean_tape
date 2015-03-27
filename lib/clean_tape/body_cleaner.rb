@@ -23,51 +23,35 @@ module CleanTape
     def traverse_body(node, indent="")
       case node
       when Array
-        puts "#{indent}["
         node.map! { |n| traverse_body(n, indent + "  ") }
-        puts "#{indent}]"
       when Hash
         # don't use node.each. using keys allows you to modify the hash inline
-        puts "#{indent}{"
         node.keys.each do |key|
           value = node[key]
           case value
-          when Array
-            puts "#{indent}#{key}: ["
-            if value.first.kind_of?(Array) || value.first.kind_of?(Hash)
-              traverse_body(value, indent + "  ")
-            elsif value.first == nil
-            else
-              raise "no!: #{value.first.class}"
-            end
-            puts "#{indent}]"
-          when Hash
-            puts "#{indent}#{key}: {"
-            if value.kind_of?(Hash)
-              traverse_body(value, indent + "  ")
-            elsif value.kind_of?(Array)
-              if value.first.kind_of?(Hash)
-                traverse_body(value, indent + " ")
-              else
-                puts "#{indent}#{key}: "
-              end
-            else # convert
-            end
-            puts "#{indent}}"
-
-          when String, Fixnum
-            puts "#{indent}#{key}: #{value}"
           when NilClass
+            # do nothing
+          when Hash
+            traverse_body(value, "indent" + "  ")
+          when String, Fixnum
+            node[key] = mapper.fix_field(key, value)
+          when Array
+            case value.first
+            when NilClass
+              #do nothing
+            when String, Fixnum
+              node[key] = mapper.fix_fields(key, value)
+            when Hash
+              traverse_body(value, "indent" + "  ")
+            else
+              raise "no! {#{key}: [#{value.first.class}]}"
+            end
           else
-            puts "#{indent}#{key}: #{value.class.name}"
+            raise "no!: {#{key}: #{value.class}}"
           end
-          # sanitize_ip domain (host)
         end
-        puts "#{indent}}"
-      when String
-        puts "#{indent}string: #{node}"
       else
-        puts "#{indent}unknown node[#{node.class}]: #{node}"
+        raise "top level #{value.class}}"
       end
       node
     end
