@@ -100,7 +100,12 @@ module CleanTape
 
     def clean_response_body
       interactions.each do |i|
-        i["response"]["body"]["string"] = body_cleaner.clean(i["response"]["body"]["string"])
+        # body can come with encoding or not.
+        if i["response"]["body"].kind_of?(Hash)
+          i["response"]["body"]["string"]= body_cleaner.clean(i["response"]["body"]["string"])
+        else
+          i["response"]["body"] = body_cleaner.clean(i["response"]["body"])
+        end
       end
     end
 
