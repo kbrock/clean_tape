@@ -51,6 +51,7 @@ module CleanTape
         opts.on("-s", "--[no-]sort", "Sort files by url (default: #{options[:sort]})") { |v| options[:sort] = v }
         opts.on("-r", "--recorded-with", "Normalize the recorded_with value") { |v| options[:recorded_with] = v }
         opts.on("-d", "--recorded-at", "Normalize the recorded_at date") { |v| options[:recorded_at] = v }
+        opts.on("-g", "--guess", "Guess if the field contains an ip or mac address") { |v| options[:recorded_at] = v }
         opts.on("--[no-]dry-run", "Just see results don't actuall save anything") { |v| options[:dry_run] = v }
         opts.on("--json",         "Parse body as json") { |v| options[:json] = v}
         opts.on("--yaml",         "Parse body as yaml") { |v| options[:json] = v}

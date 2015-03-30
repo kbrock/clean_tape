@@ -12,6 +12,7 @@ module CleanTape
     attr_accessor :domain_fields
     attr_accessor :host_fields
     attr_accessor :url_fields
+    attr_accessor :guess
 
     def initialize
       # some time in the future this will be defined by others
@@ -44,6 +45,8 @@ module CleanTape
         fix_domain(value)
       elsif url?(name)
         fix_url(value)
+      elsif !guess # if we don't want to guess, just return the value
+        value
       elsif mac?(name, value) # now guess
         fix_mac(value)
       elsif ip?(name, value)
